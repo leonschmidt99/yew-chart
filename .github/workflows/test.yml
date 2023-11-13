@@ -50,6 +50,16 @@ jobs:
       working-directory: ./examples/scatter
       run: cargo fmt -- --check
 
+    - name: Lint bars
+      env:
+        RUSTFLAGS: -Dwarnings
+      working-directory: ./examples/bars
+      run: cargo clippy
+
+    - name: Format bars
+      working-directory: ./examples/bars
+      run: cargo fmt -- --check
+
     - name: Lint lib
       env:
         RUSTFLAGS: -Dwarnings

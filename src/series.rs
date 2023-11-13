@@ -110,6 +110,8 @@ pub enum BarType {
     Rise,
     ///Each bar begins at the top of the graph and drops to the given datapoint.
     Drop,
+    /// TODO Each bar begins at the the the bottom of the graph and uses different colors to rise to the given datapoints.
+    Stacked,
 }
 
 #[derive(Properties, Clone)]
@@ -293,6 +295,8 @@ fn draw_chart<A, B>(
                 let (y1, y2) = match bar_type {
                     BarType::Rise => (y1, props.height + props.y),
                     BarType::Drop => (props.y, y1),
+                    // BarType::Stacked => (y1, props.height + props.y),
+                    BarType::Stacked => todo!("not yet implemented"),
                 };
 
                 if y1 != y2 {
