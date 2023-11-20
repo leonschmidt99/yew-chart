@@ -85,6 +85,9 @@ pub struct Props<S: Scalar> {
     pub title: Option<String>,
     /// The scaling conversion to be used with the axis
     pub scale: Rc<dyn Scale<Scalar = S>>,
+    /// An optional horizontal offset to be applied to the axis (useful e.g. for bar charts)
+    #[prop_or_default]
+    pub x_offset: Option<f32>,
 }
 
 impl<S: Scalar> PartialEq for Props<S> {
@@ -204,11 +207,13 @@ impl<S: Scalar + 'static> Component for Axis<S> {
                 (y + p.tick_len, "hanging")
             };
 
+            let offset = p.x_offset.unwrap_or_default();
+
             html! {
                 <svg ref={self.svg.clone()} class={classes!("axis", class, p.name.to_owned())}>
-                    <line x1={p.x1.to_string()} y1={p.y1.to_string()} x2={p.xy2.to_string()} y2={p.y1.to_string()} class="line" />
+                    <line x1={p.x1.to_string()} y1={p.y1.to_string()} x2={(p.xy2 + offset * 2.0).to_string()} y2={p.y1.to_string()} class="line" />
                     { for(p.scale.ticks().iter()).map(|Tick { location: NormalisedValue(normalised_location), label }| {
-                        let x = p.x1 + normalised_location * scale;
+                        let x = p.x1 + normalised_location * scale + offset;
                         html! {
                         <>
                             <line x1={x.to_string()} y1={y.to_string()} x2={x.to_string()} y2={to_y.to_string()} class="tick" />
@@ -226,7 +231,7 @@ impl<S: Scalar + 'static> Component for Axis<S> {
                             p.y1 + title_distance
                         };
                         let x = p.x1 + ((p.xy2 - p.x1) * 0.5);
-                        title(x, y, baseline, t)
+                        title(x + offset, y, baseline, t)
                     })}
                 </svg>
             }

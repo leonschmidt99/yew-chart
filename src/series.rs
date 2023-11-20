@@ -152,6 +152,9 @@ where
     pub x: f32,
     /// The start position
     pub y: f32,
+    /// An optional horizontal offset to be applied to the series (useful e.g. for bar charts)
+    #[prop_or_default]
+    pub x_offset: Option<f32>,
 }
 
 impl<A, B> Props<A, B>
@@ -252,7 +255,7 @@ where
                     if let Some(l) = labeller {
                         svg_elements.push(html! {
                             <g class={classes.to_owned()}>
-                                {l(x, y)}
+                                {l(x + props.x_offset.unwrap_or_default(), y)}
                             </g>
                         });
                     }
@@ -291,7 +294,7 @@ fn draw_chart<A, B>(
         Type::Bar(bar_type) => {
             for point in element_points.iter() {
                 let (data_x, data_y1, x, y1) = *point;
-
+                let x = x + props.x_offset.unwrap_or_default();
                 let (y1, y2) = match bar_type {
                     BarType::Rise => (y1, props.height + props.y),
                     BarType::Drop => (props.y, y1),

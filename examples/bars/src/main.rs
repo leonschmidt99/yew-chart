@@ -16,6 +16,7 @@ const WIDTH: f32 = 533.0;
 const HEIGHT: f32 = 300.0;
 const MARGIN: f32 = 50.0;
 const TICK_LENGTH: f32 = 10.0;
+const X_OFFSET: f32 = 15.0; // recommended for bar charts: (bar width / 2.0)
 
 #[function_component(App)]
 fn app() -> Html {
@@ -64,7 +65,8 @@ fn app() -> Html {
                     horizontal_scale_step={Duration::days(2).num_milliseconds()}
                     tooltipper={Rc::clone(&tooltip)}
                     vertical_scale={Rc::clone(&v_scale)}
-                    x={MARGIN} y={MARGIN} width={WIDTH - (MARGIN * 2.0)} height={HEIGHT - (MARGIN * 2.0)} />
+                    x={MARGIN} y={MARGIN} width={WIDTH - (MARGIN * 2.0)} height={HEIGHT - (MARGIN * 2.0)}
+                    x_offset={X_OFFSET} />
 
                 <Axis<f32>
                     name="some-y-axis"
@@ -80,7 +82,8 @@ fn app() -> Html {
                     scale={Rc::clone(&h_scale)}
                     x1={MARGIN} y1={HEIGHT - MARGIN} xy2={WIDTH - MARGIN}
                     tick_len={TICK_LENGTH}
-                    title={"Some X thing".to_string()} />
+                    title={"Some X thing".to_string()}
+                    x_offset={X_OFFSET} />
 
             </svg>
     }
