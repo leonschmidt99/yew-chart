@@ -2,4 +2,4 @@ A basic example to get started. To run this example, type `trunk serve` from thi
 
 Here's what you should see:
 
-![Sample chart](../../images/bar-chart-30px.png "A bar chart")
+![Sample chart](../../images/stacked-bar-chart.png "A stacked bar chart")

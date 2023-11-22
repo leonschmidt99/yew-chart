@@ -4,5 +4,6 @@
         "./examples/basic/Cargo.toml",
         "./examples/scatter/Cargo.toml",
         "./examples/bars/Cargo.toml",
+        "./examples/stacked_bars/Cargo.toml",
     ]
 }

@@ -58,6 +58,10 @@ pub type Data<A, B> = Vec<(A, B, Option<Rc<dyn Labeller>>)>;
 const DATA_LABEL_OFFSET: f32 = 3.0;
 const CIRCLE_RADIUS: f32 = DATA_LABEL_OFFSET * 0.5;
 
+/// Copied from https://observablehq.com/@d3/color-schemes
+/// For use with stacked bar charts
+const CATEGORY10: [&str; 10] = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+
 // A convenience for using an optional string as a label along with a circle dot.
 fn label(text: Option<&str>) -> impl Labeller {
     let text = text.map(|t| t.to_string());
@@ -292,14 +296,31 @@ fn draw_chart<A, B>(
 
     match props.series_type {
         Type::Bar(bar_type) => {
+
+            // vars for stacked bar charts
+            let mut recent_x = 0.0;
+            let mut recent_y = 0.0;
+            let mut stack_ctr = 0;
+
             for point in element_points.iter() {
                 let (data_x, data_y1, x, y1) = *point;
                 let x = x + props.x_offset.unwrap_or_default();
                 let (y1, y2) = match bar_type {
                     BarType::Rise => (y1, props.height + props.y),
                     BarType::Drop => (props.y, y1),
-                    // BarType::Stacked => (y1, props.height + props.y),
-                    BarType::Stacked => todo!("not yet implemented"),
+                    BarType::Stacked => {
+                        if x == recent_x {
+                            stack_ctr += 1; stack_ctr %= CATEGORY10.len();
+                            let tmp = recent_y;
+                            recent_y -= props.height + props.y - y1;
+                            (recent_y, tmp)
+                        } else {
+                            stack_ctr = 0;
+                            recent_x = x;
+                            recent_y = y1;
+                            (y1, props.height + props.y)
+                        }
+                    },
                 };
 
                 if y1 != y2 {
@@ -319,7 +340,7 @@ fn draw_chart<A, B>(
                     #[cfg(not(feature = "custom-tooltip"))]
                     let html = html! {
                         <line x1={x.to_string()} y1={y1.to_string()} x2={x.to_string()} y2={y2.to_string()}
-                            class={classes!(classes.to_owned(), "bar-chart")}>
+                            class={classes!(classes.to_owned(), "bar-chart")} stroke={CATEGORY10[stack_ctr]}>
                         {
                             if let Some(tt) = &props.tooltipper {
                                 html! {

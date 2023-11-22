@@ -60,6 +60,16 @@ jobs:
       working-directory: ./examples/bars
       run: cargo fmt -- --check
 
+    - name: Lint stacked bars
+      env:
+        RUSTFLAGS: -Dwarnings
+      working-directory: ./examples/stacked_bars
+      run: cargo clippy
+
+    - name: Format stacked_bars
+      working-directory: ./examples/stacked_bars
+      run: cargo fmt -- --check
+
     - name: Lint lib
       env:
         RUSTFLAGS: -Dwarnings
