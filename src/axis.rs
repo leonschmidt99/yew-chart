@@ -82,6 +82,7 @@ pub struct Props<S: Scalar> {
     /// The length of ticks
     pub tick_len: f32,
     /// Any title to be drawn and associated with the axis
+    #[prop_or_default]
     pub title: Option<String>,
     /// The scaling conversion to be used with the axis
     pub scale: Rc<dyn Scale<Scalar = S>>,
