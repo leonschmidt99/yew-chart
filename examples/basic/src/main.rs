@@ -26,25 +26,29 @@ fn app() -> Html {
     let circle_text_labeller = Rc::from(series::circle_text_label("Label")) as Rc<dyn Labeller>;
 
     let data_set = Rc::new(vec![
-        (start_date.timestamp_millis(), 1.0, None),
+        (start_date.timestamp_millis(), 1.0, None, None),
         (
             start_date.add(Duration::days(1)).timestamp_millis(),
             4.0,
+            None,
             None,
         ),
         (
             start_date.add(Duration::days(2)).timestamp_millis(),
             3.0,
             None,
+            None,
         ),
         (
             start_date.add(Duration::days(3)).timestamp_millis(),
             2.0,
             None,
+            None,
         ),
         (
             start_date.add(Duration::days(4)).timestamp_millis(),
             5.0,
+            None,
             Some(circle_text_labeller),
         ),
     ]);

@@ -7,5 +7,6 @@ license = "Apache-2.0"
 
 [dependencies]
 chrono = { version = "0.4.31", features = [ "serde", "wasmbind" ] }
+# yew-chart = { path = "../..", features = ["custom-tooltip"] }
 yew-chart = { path = "../.." }
 yew = {version = "0.21", features = [ "csr" ] }

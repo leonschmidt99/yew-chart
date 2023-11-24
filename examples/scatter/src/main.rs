@@ -38,25 +38,29 @@ impl Component for App {
 
         App {
             data_set: Rc::new(vec![
-                (start_date.timestamp_millis(), 1.0, None),
+                (start_date.timestamp_millis(), 1.0, None, None),
                 (
                     start_date.add(Duration::milliseconds(1)).timestamp_millis(),
                     4.0,
+                    None,
                     Some(Rc::clone(&circle_labeller)),
                 ),
                 (
                     start_date.add(Duration::milliseconds(2)).timestamp_millis(),
                     3.0,
+                    None,
                     Some(Rc::clone(&circle_labeller)),
                 ),
                 (
                     start_date.add(Duration::milliseconds(3)).timestamp_millis(),
                     2.0,
+                    None,
                     Some(circle_labeller),
                 ),
                 (
                     start_date.add(Duration::milliseconds(4)).timestamp_millis(),
                     5.0,
+                    None,
                     Some(circle_text_labeller),
                 ),
             ]),
