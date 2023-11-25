@@ -31,38 +31,38 @@ fn app() -> Html {
     // }));
 
     let data_set = Rc::new(vec![
-        (start_date.timestamp_millis(), 1.0, Some("blar".to_string()), None),
-        (start_date.timestamp_millis(), 2.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 3.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
-        (start_date.timestamp_millis(), 1.0, None, None),
+        (start_date.timestamp_millis(), 1.0, Some("blar".to_string()), Some(1), None),
+        (start_date.timestamp_millis(), 2.0, Some("blub".to_string()), Some(5), None),
+        (start_date.timestamp_millis(), 1.0, Some("blaf".to_string()), Some(3), None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 3.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
+        (start_date.timestamp_millis(), 1.0, None, None, None),
         (
             start_date.add(Duration::days(1)).timestamp_millis(),
             4.0,
-            None, None
+            None, None, None
         ),
         (
             start_date.add(Duration::days(2)).timestamp_millis(),
             3.0,
-            None, None
+            None, None, None
         ),
-        (start_date.add(Duration::days(2)).timestamp_millis(), 1.0, None, None),
+        (start_date.add(Duration::days(2)).timestamp_millis(), 1.0, None, None, None),
         (
             start_date.add(Duration::days(3)).timestamp_millis(),
             2.0,
-            None, None
+            None, None, None
         ),
         (
             start_date.add(Duration::days(4)).timestamp_millis(),
             5.0,
-            None,
+            None, None,
             Some(circle_text_labeller),
         ),
     ]);

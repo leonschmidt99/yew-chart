@@ -52,8 +52,8 @@ impl<A: Scalar, B: Scalar, T: Fn(A, B) -> String> Tooltipper<A, B> for T {}
 #[cfg(feature = "custom-tooltip")]
 pub type TooltipCallback = Callback<(MouseEvent, String)>;
 
-/// Describes a data series with each point optionally receiving a title and/or labeller
-pub type Data<A, B> = Vec<(A, B, Option<String>, Option<Rc<dyn Labeller>>)>;
+/// Describes a data series with each point optionally receiving a title, color index, and labeller
+pub type Data<A, B> = Vec<(A, B, Option<String>, Option<usize>, Option<Rc<dyn Labeller>>)>;
 
 const DATA_LABEL_OFFSET: f32 = 3.0;
 const CIRCLE_RADIUS: f32 = DATA_LABEL_OFFSET * 0.5;
@@ -233,7 +233,7 @@ where
         let mut svg_elements = Vec::<Html>::with_capacity(props.data.len() * 2);
 
         if props.data.len() > 0 {
-            let mut element_points = Vec::<(A, B, f32, f32, &Option<String>)>::with_capacity(props.data.len());
+            let mut element_points = Vec::<(A, B, f32, f32, &Option<String>, &Option<usize>)>::with_capacity(props.data.len());
 
             let mut top_y = props.height;
 
@@ -242,7 +242,7 @@ where
 
             let data_step = props.horizontal_scale_step.unwrap_or(A::MAX);
             let mut last_data_step = -data_step;
-            for (data_x, data_y, title, labeller) in props.data.iter() {
+            for (data_x, data_y, title, color, labeller) in props.data.iter() {
                 let (data_x, data_y) = (*data_x, *data_y);
                 let step = (data_x / data_step) * data_step;
                 if step - last_data_step > data_step {
@@ -265,7 +265,7 @@ where
                     }
 
                     top_y = top_y.min(y);
-                    element_points.push((data_x, data_y, x, y, title));
+                    element_points.push((data_x, data_y, x, y, title, color));
                 }
 
                 last_data_step = step;
@@ -278,7 +278,7 @@ where
 }
 
 fn draw_chart<A, B>(
-    element_points: &[(A, B, f32, f32, &Option<String>)],
+    element_points: &[(A, B, f32, f32, &Option<String>, &Option<usize>)],
     props: &Props<A, B>,
     svg_elements: &mut Vec<VNode>,
     classes: &Classes,
@@ -303,14 +303,14 @@ fn draw_chart<A, B>(
             let mut stack_ctr = 0;
 
             for point in element_points.iter() {
-                let (data_x, data_y1, x, y1, title) = *point;
+                let (data_x, data_y1, x, y1, title, color) = *point;
                 let x = x + props.x_offset.unwrap_or_default();
                 let (y1, y2) = match bar_type {
                     BarType::Rise => (y1, props.height + props.y),
                     BarType::Drop => (props.y, y1),
                     BarType::Stacked => {
                         if x == recent_x {
-                            stack_ctr += 1; stack_ctr %= CATEGORY10.len();
+                            stack_ctr += 1;
                             let tmp = recent_y;
                             recent_y -= props.height + props.y - y1;
                             (recent_y, tmp)
@@ -333,14 +333,14 @@ fn draw_chart<A, B>(
                         };
                         html! {
                             <line x1={x.to_string()} y1={y1.to_string()} x2={x.to_string()} y2={y2.to_string()}
-                                class={classes!(classes.to_owned(), "bar-chart")} stroke={CATEGORY10[stack_ctr]}
+                                class={classes!(classes.to_owned(), "bar-chart")} stroke={CATEGORY10[color.unwrap_or(stack_ctr) % CATEGORY10.len()]}
                                 onmouseover={onmouseover(&props.onmouseover, title)}/>
                         }
                     };
                     #[cfg(not(feature = "custom-tooltip"))]
                     let html = html! {
                         <line x1={x.to_string()} y1={y1.to_string()} x2={x.to_string()} y2={y2.to_string()}
-                            class={classes!(classes.to_owned(), "bar-chart")} stroke={CATEGORY10[stack_ctr]}>
+                            class={classes!(classes.to_owned(), "bar-chart")} stroke={CATEGORY10[color.unwrap_or(stack_ctr) % CATEGORY10.len()]}>
                         {
                             if let Some(tit) = title {
                                 html! {
@@ -363,11 +363,11 @@ fn draw_chart<A, B>(
             }
         }
         Type::Line => {
-            let mut last_point: Option<(A, B, f32, f32, &Option<String>)> = None;
+            let mut last_point: Option<(A, B, f32, f32, &Option<String>, &Option<usize>)> = None;
             for point in element_points.iter() {
-                let (data_x2, data_y2, x2, y2, _) = *point;
+                let (data_x2, data_y2, x2, y2, _, _) = *point;
 
-                if let Some((data_x1, data_y1, x1, y1, _)) = last_point {
+                if let Some((data_x1, data_y1, x1, y1, _, _)) = last_point {
                     #[cfg(feature = "custom-tooltip")]
                     let html = {
                         let title = if let Some(tt) = &props.tooltipper {
