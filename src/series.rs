@@ -114,7 +114,7 @@ pub enum BarType {
     Rise,
     ///Each bar begins at the top of the graph and drops to the given datapoint.
     Drop,
-    /// TODO Each bar begins at the the the bottom of the graph and uses different colors to rise to the given datapoints.
+    /// Each bar begins at the the the bottom of the graph and uses different colors to rise to the given datapoints.
     Stacked,
 }
 
